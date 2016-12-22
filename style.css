@@ -1,0 +1,39 @@
+body, h1, h2, h3, h4, h5, p, text {
+    /*font-family:"nyt-cheltenham",georgia,"times new roman",times,serif;*/
+    font-family: 'Roboto', sans-serif;
+    font-weight: 200;
+}
+text {
+    /* font-family: nyt-franklin,arial,helvetica,sans-serif;*/
+}
+
+path {
+    stroke-width: 3px;
+    fill: white;
+    stroke: #ba3d43;
+}
+
+text {
+    font-size: 12px;
+}
+
+p {
+    font-size: 14px;
+    color: #666;
+}
+
+@keyframes dash {
+  to {
+    stroke-width: 16px;
+  }
+}
+
+
+/* Page template*/
+.navbar {
+    background: #009688;
+    border-radius: 0;
+}
+nav a.navbar-brand {
+       color: white !important;
+}
