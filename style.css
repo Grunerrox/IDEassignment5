@@ -37,3 +37,17 @@ p {
 nav a.navbar-brand {
        color: white !important;
 }
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 140px;
+    height: 22px;
+    padding: 2px;
+    font: 12px sans-serif;
+    border: 2px solid;
+    border-color: lightsteelblue;
+    background: rgba(255,255,255,1);
+    border-radius: 5px;
+    pointer-events: none;
+}
