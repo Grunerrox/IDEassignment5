@@ -32,19 +32,76 @@ var svg = d3.select("div.map")
     .attr("width", width)
     .attr("height", height);
 
-console.log('test');
-//Load in GeoJSON data
-d3.json("https://raw.githubusercontent.com/alignedleft/d3-book/master/chapter_12/us-states.json", function(data) {
-    //loadMap(data,"#ccc");
-});
 
+//Load in GeoJSON data
 d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sfpd_districts.geojson", function(data) {
     loadMap(data,"#fff");
 });
 
+var crimes = []
+function getCategory(crime) {
+    crimes.push(crime.properties.Category);
+}
+d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crime.geojson", function(data) {
+    // get all categories of crimes, and remove duplicates
+    data.features.forEach(getCategory);
+    crimes = crimes.filter( function( item, index, inputArray ) {
+        return inputArray.indexOf(item) == index;
+    });
+    console.log(crimes);
+
+    loadCrime(data,"#fff");
+});
+
+
+// Just for test purpose
+function showAll() {
+    return d3.selectAll('path').attr("hidden",null);
+}
+function hideAll() {
+    return d3.selectAll('path').attr("hidden",true);
+}
+
+
+
+function loadCrime(data,color) {
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltipCrime")
+        .style("opacity", 0);
+
+    svg.selectAll("path")
+        .data(data.features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .style("fill", function (d) {
+            return color;
+        })
+        //attr("hidden",true)
+        .attr("category", function(d){
+            return d.properties.Category;
+        })
+        .style("opacity", 0.5)
+        .on("mouseover", function (d) {
+            d3.select(this).style("fill", "grey");
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html("Crime: <b>" + d.properties.Category + "</b>")
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY) + "px");
+        })
+        .on("mouseleave", function () {
+            d3.select(this).style("fill", "white");
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+}
+
 function loadMap(data,color) {
     var div = d3.select("body").append("div")
-        .attr("class", "tooltip")
+        .attr("class", "tooltipMap")
         .style("opacity", 0);
 
     svg.selectAll("path")
@@ -57,11 +114,12 @@ function loadMap(data,color) {
             return color;
         })
         .on("mouseover", function (d) {
+            console.log(d);
             d3.select(this).style("fill", "grey");
             div.transition()
                 .duration(200)
                 .style("opacity", .9);
-            div.html("District: <b>" + d.properties.district + "</b>")
+            div.html("District: <b>" + d.properties.PdDistrict + "</b>")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY) + "px");
         })
@@ -71,12 +129,4 @@ function loadMap(data,color) {
                 .duration(500)
                 .style("opacity", 0);
         });
-}
-
-
-function flash(name) {
-    return function() {
-        d3.select(this).append("text")
-            .attr("class", name);
-    };
 }
