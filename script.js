@@ -32,39 +32,62 @@ var svg = d3.select("div.map")
     .attr("width", width)
     .attr("height", height);
 
+var select = d3.select("div.select")
+    .append("select")
+    .on('change',onchange);
 
 //Load in GeoJSON data
 d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sfpd_districts.geojson", function(data) {
     loadMap(data,"#fff");
 });
 
-var crimes = []
+var crimes = ["Show All"]
 function getCategory(crime) {
     crimes.push(crime.properties.Category);
 }
+
 d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crime.geojson", function(data) {
     // get all categories of crimes, and remove duplicates
     data.features.forEach(getCategory);
     crimes = crimes.filter( function( item, index, inputArray ) {
         return inputArray.indexOf(item) == index;
     });
-    console.log(crimes);
-
+    loadSelection(crimes);
     loadCrime(data,"#fff");
 });
 
-
-// Just for test purpose
-function showAll() {
-    return d3.selectAll('path').attr("hidden",null);
+function loadSelection(crimes) {
+    select.selectAll("option")
+        .data(crimes)
+        .enter()
+        .append("option")
+        .attr("value", function(d) {
+            return d;
+        })
+        .html(function(d){return d});
 }
-function hideAll() {
-    return d3.selectAll('path').attr("hidden",true);
+
+function onchange() {
+    selectValue = d3.select('select').property('value');
+    if (selectValue == "Show All") {
+        d3.selectAll("path.crime").attr("hidden",null);
+    } else {
+        filterCrime(selectValue)
+    }
+};
+
+function filterCrime(crime) {
+    d3.selectAll("path.crime").attr("hidden",true);
+    d3.selectAll("path.crime").each(function(d) {
+        category = d3.select(this).attr("category");
+        if (category == crime){
+            d3.select(this).attr("hidden",null);
+        }
+    });
 }
 
 
-
-function loadCrime(data,color) {
+function loadCrime(data) {
     var div = d3.select("body").append("div")
         .attr("class", "tooltipCrime")
         .style("opacity", 0);
@@ -73,16 +96,16 @@ function loadCrime(data,color) {
         .data(data.features)
         .enter()
         .append("path")
+        .attr("class","crime")
         .attr("d", path)
-        .style("fill", function (d) {
-            return color;
-        })
+        .style("fill", "white")
         //attr("hidden",true)
         .attr("category", function(d){
             return d.properties.Category;
         })
         .style("opacity", 0.5)
         .on("mouseover", function (d) {
+            console.log(d);
             d3.select(this).style("fill", "grey");
             div.transition()
                 .duration(200)
@@ -108,13 +131,12 @@ function loadMap(data,color) {
         .data(data.features)
         .enter()
         .append("path")
+        .attr("class","map")
         .attr("d", path)
         .style("fill", function (d) {
-            console.log(d);
             return color;
         })
         .on("mouseover", function (d) {
-            console.log(d);
             d3.select(this).style("fill", "grey");
             div.transition()
                 .duration(200)
