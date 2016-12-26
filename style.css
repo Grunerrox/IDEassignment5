@@ -10,11 +10,7 @@ text {
 path {
     stroke-width: 1px;
     fill: rgba(255,255,255,0.22);
-    stroke: #ba3d43;
-}
-
-path.crime {
-    stroke: #cf9950;
+    stroke: #C0C0C0;
 }
 
 text {
@@ -58,9 +54,9 @@ div.tooltipMap {
 
 div.tooltipCrime {
     position: absolute;
-    text-align: center;
+    text-align: left;
     width: 200px;
-    height: 22px;
+    height: 100px;
     padding: 2px;
     font: 12px sans-serif;
     border: 2px solid;
@@ -70,6 +66,40 @@ div.tooltipCrime {
     pointer-events: none;
 }
 
+div.tooltipCrimeSelected {
+    position: absolute;
+    text-align: left;
+    width: 200px;
+    height: 100px;
+    padding: 2px;
+    left: 10px;
+    top: 10px;
+    font: 12px sans-serif;
+    border: 2px solid;
+    border-color: lightsteelblue;
+    background: rgba(255,255,255,1);
+    border-radius: 5px;
+    pointer-events: none;
+}
 div.map {
     background-color: #f2f6f9;
+    position: relative;
+}
+
+div.select {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+path.crime {
+    stroke: #cf9950
+}
+
+path.crime.selected {
+    fill: #cf9950;
+    stroke: #009688;
+    stroke-width: 20px;
+    animation: dash 2s ease alternate infinite;
+    cursor: pointer;
 }

@@ -1,10 +1,10 @@
 //Width and height
 var width = window.innerWidth, height = window.innerHeight;
-
+width = 1000, height = 1000;
 
 //Define map projection (zoom in on san francisco)
 var projection = d3.geoMercator()
-    .center([-122.333701, 37.767683])
+    .center([-122.4337, 37.7677])
     .scale(280000)
     .translate([width / 2, height / 2]);
 
@@ -24,6 +24,7 @@ var svg = d3.select("div.map")
 
 var select = d3.select("div.select")
     .append("select")
+    .attr("class","form-control")
     .on('change',onchange);
 
 //Load in GeoJSON data
@@ -83,8 +84,11 @@ function filterCrime(crime) {
 
 
 function loadCrime(data) {
-    var div = d3.select("body").append("div")
+    var div = d3.select(".map").append("div")
         .attr("class", "tooltipCrime")
+        .style("opacity", 0);
+    var divSelect = d3.select(".map").append("div")
+        .attr("class", "tooltipCrimeSelected")
         .style("opacity", 0);
 
     svg.selectAll("path")
@@ -100,20 +104,39 @@ function loadCrime(data) {
         })
         .style("opacity", 0.5)
         .on("mouseover", function (d) {
-            console.log(d);
-            d3.select(this).style("fill", "grey");
+            //console.log(d);
+            d3.select(this).style("fill", "#009688");
+            divSelect.style("opacity","0")
             div.transition()
                 .duration(200)
                 .style("opacity", .9);
-            div.html("Crime: <b>" + d.properties.Category + "</b>")
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY) + "px");
+            div.html("Crime: <b>" + d.properties.Category + "</b><br/>" +
+                     "Address: <b>" + d.properties.Address + "</b><br/>" +
+                     "Week day: <b>" + d.properties.DayOfWeek + "</b><br/>" +
+                     "Resolution: <b>" + d.properties.Resolution + "</b><br/>")
+                //.style("left", (d3.event.pageX) + "px")
+                //.style("top", (d3.event.pageY) + "px")
+                .attr("position","absolute")
+                .style("left", "10px")
+
+                .style("top", "10px");
         })
         .on("mouseleave", function () {
             d3.select(this).style("fill", "white");
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
+            divSelect.style("opacity", 1);
+        })
+        .on("click", function(d) {
+            d3.selectAll("path.crime")
+                .classed("selected",false);
+            d3.select(this).classed("selected",true);
+            divSelect.html("Crime: <b>" + d.properties.Category + "</b><br/>" +
+                "Address: <b>" + d.properties.Address + "</b><br/>" +
+                "Week day: <b>" + d.properties.DayOfWeek + "</b><br/>" +
+                "Resolution: <b>" + d.properties.Resolution + "</b><br/>")
+                .style("opacity", 1);
         });
 }
 

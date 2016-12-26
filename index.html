@@ -7,13 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css"
           integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
-    <link href="//cartodb-libs.global.ssl.fastly.net/cartodbui/assets/4.5.75/favicons/favicon.ico?1467884079" rel="shortcut icon" type="image/vnd.microsoft.icon" />    <link href="//cartodb-libs.global.ssl.fastly.net/cartodbui/assets/4.5.75/stylesheets/editor3.css" media="all" rel="stylesheet" type="text/css" />
-    <link href="//cartodb-libs.global.ssl.fastly.net/cartodbui/assets/4.5.75/stylesheets/deep_insights.css" media="all" rel="stylesheet" type="text/css" />
-    <meta content="authenticity_token" name="csrf-param" />
-    <meta content="JqnMZSiR66E1rQ4BSqrtFP5gEy+8SyYv62AxdRclUR8=" name="csrf-token" />  </head>
-
 
 </head>
 <body>
@@ -22,35 +19,33 @@
             <a class="navbar-brand" href="#">Mapping crime</a>
         </div>
     </nav>
-    <div class="container" style="margin-top: 100px;">
+    <div class="container" style="margin-top: 50px;">
 
-        <div hidden="">
-            Description: in this assignment you will mine a dataset (sf_crime.geojson) of 10.000 randomly sampled and
-            geocoded crime incidents in the city of San Francisco. Your job is to make at least two significant data
-            discoveries and support your findings with at least one map visualization. You may optionally use additional
-            visualizations.
-            The original dataset is described on https://www.kaggle.com/c/sf-crime. There, you can also download the
-            original CSV file (~800,000 incidents). We have created a police district dataset (sfpd_districts.geojson),
-            which may or may not be useful to you.
-            We have created the GeoJSON file using shuf and head (Linux commands) to sample the original CSV file and
-            ogr2ogr to convert from CSV to GeoJSON.
-            Allowed tools: You may use D3, CartoDB.com or another web-ready visualization tool.
-            Hand in: please submit only a link to a webpage that contains your final solution.
+        <!--Description: in this assignment you will mine a dataset (sf_crime.geojson) of 10.000 randomly sampled and-->
+        <!--geocoded crime incidents in the city of San Francisco. Your job is to make at least two significant data-->
+        <!--discoveries and support your findings with at least one map visualization. You may optionally use additional-->
+        <!--visualizations.-->
+        <!--The original dataset is described on https://www.kaggle.com/c/sf-crime. There, you can also download the-->
+        <!--original CSV file (~800,000 incidents). We have created a police district dataset (sfpd_districts.geojson),-->
+        <!--which may or may not be useful to you.-->
+        <!--We have created the GeoJSON file using shuf and head (Linux commands) to sample the original CSV file and-->
+        <!--ogr2ogr to convert from CSV to GeoJSON.-->
+        <!--Allowed tools: You may use D3, CartoDB.com or another web-ready visualization tool.-->
+        <!--Hand in: please submit only a link to a webpage that contains your final solution.-->
 
-            Formulate an brief description of the topic of your final project. Create a new discussion on the Absalon
-            Discussion page and post the description of the project there. The projects must be pre-approved by me,
-            before you start working on them (mainly to ensure that it is feasible within our time frame). I'll try to
-            respond within 24 hours (with some potential exceptions around Christmas and New Year). Note that you might
-            be asked to reconsider parts of your projects, so I recommend that you don't wait until the last moment to
-            start thinking about this. This part (Part 2) of Assignment 5 will not be graded.
+        <!--Formulate an brief description of the topic of your final project. Create a new discussion on the Absalon-->
+        <!--Discussion page and post the description of the project there. The projects must be pre-approved by me,-->
+        <!--before you start working on them (mainly to ensure that it is feasible within our time frame). I'll try to-->
+        <!--respond within 24 hours (with some potential exceptions around Christmas and New Year). Note that you might-->
+        <!--be asked to reconsider parts of your projects, so I recommend that you don't wait until the last moment to-->
+        <!--start thinking about this. This part (Part 2) of Assignment 5 will not be graded.-->
+
+        <h1>Crime incidents in the city of San Francisco</h1>
+        <h2>D3</h2>
+        <div class="map">
+            <div class="select"></div>
         </div>
-
-
-        <h2>Crime incidents in the city of San Francisco</h2>
-        <div class="select"></div>
-        <h3>D3</h3>
-        <div class="map"></div>
-        <h3>CartoDB</h3>
+        <h2>CartoDB</h2>
         <iframe width="100%"
                 height="520"
                 frameborder="0"
