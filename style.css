@@ -9,8 +9,12 @@ text {
 
 path {
     stroke-width: 1px;
-    fill: white;
+    fill: rgba(255,255,255,0.22);
     stroke: #ba3d43;
+}
+
+path.crime {
+    stroke: #cf9950;
 }
 
 text {
@@ -66,10 +70,6 @@ div.tooltipCrime {
     pointer-events: none;
 }
 
-path[hide=true] {
-    visibility: visible;
-}
-
-path[hide=false] {
-    visibility: visible;
+div.map {
+    background-color: #f2f6f9;
 }

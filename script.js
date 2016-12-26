@@ -2,20 +2,10 @@
 var width = window.innerWidth, height = window.innerHeight;
 
 
-//Define map projection
-/* var projection = d3.geoTransform({
-    point: function(px, py) {
-        this.stream.point(scale(px), scale(py));
-    }
-});*/
-
-// var projection = d3.geoAlbersUsa()
-//     .translate([width/2, height/2])
-//     .scale([1000]);
-
+//Define map projection (zoom in on san francisco)
 var projection = d3.geoMercator()
-    .center([-122.433701, 37.767683])
-    .scale(200000)
+    .center([-122.333701, 37.767683])
+    .scale(280000)
     .translate([width / 2, height / 2]);
 
 
@@ -29,7 +19,7 @@ var path = d3.geoPath().projection(projection);
 //Create SVG element
 var svg = d3.select("div.map")
     .append("svg")
-    .attr("width", width)
+    .attr("width", 1000)
     .attr("height", height);
 
 var select = d3.select("div.select")
@@ -41,7 +31,10 @@ d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sfpd_di
     loadMap(data,"#fff");
 });
 
+//add selection option show all
 var crimes = ["Show All"]
+
+//Insert crimes into array
 function getCategory(crime) {
     crimes.push(crime.properties.Category);
 }
@@ -56,6 +49,7 @@ d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crim
     loadCrime(data,"#fff");
 });
 
+//Add selection options given array of crimes
 function loadSelection(crimes) {
     select.selectAll("option")
         .data(crimes)
@@ -67,6 +61,7 @@ function loadSelection(crimes) {
         .html(function(d){return d});
 }
 
+// Selection onchange filter
 function onchange() {
     selectValue = d3.select('select').property('value');
     if (selectValue == "Show All") {
@@ -98,7 +93,7 @@ function loadCrime(data) {
         .append("path")
         .attr("class","crime")
         .attr("d", path)
-        .style("fill", "white")
+        //.style("fill", "white")
         //attr("hidden",true)
         .attr("category", function(d){
             return d.properties.Category;
