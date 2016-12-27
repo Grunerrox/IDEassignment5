@@ -60,13 +60,12 @@ d3.json("../geo.geojson", function (data) {
     }).sort();
     years = ["All years"].concat(years);
 
-
-
     // Create selection filters
     selections(data);
 
     // plot the data
     plot(data);
+    barChart(data);
 });
 
 // Plot crimes
@@ -78,6 +77,7 @@ function plot(data) {
 function updatePlot(data) {
     d3.selectAll("path.crime").remove();
     plot(data);
+    barChart(data);
 }
 
 function selections(data) {
@@ -237,4 +237,71 @@ function loadMap(data, color) {
                 .duration(500)
                 .style("opacity", 0);
         });
+}
+
+function filterJSON(json, key, value) {
+    var result = {};
+    for (var explosionIndex in json) {
+        if (json[explosionIndex][key] === value) {
+            result[explosionIndex] = json[explosionIndex];
+        }
+    }
+    return result;
+}
+
+function barChart(data) {
+    console.log(data)
+    // set the dimensions and margins of the graph
+    var margin = {top: 20, right: 20, bottom: 200, left: 40},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    // set the ranges
+    var x = d3.scaleBand()
+        .range([0, width])
+        .padding(0.1);
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    // append the svg object to the body of the page
+    // append a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    data = data.features;
+
+    // Scale the range of the data in the domains
+    x.domain(data.map(function(d) { return d.properties.Category; }));
+    //y.domain([0, d3.max(data, function(d) { return d.???; })]);
+
+    // append the rectangles for the bar chart
+    svg.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.properties.Category);})
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return 10; }) // CHANGE THIS
+        .attr("height", function(d) { return height - 10; }); // CHANGE THIS
+
+    // add the x Axis
+    svg.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("y", 0)
+        .attr("x", 5)
+        .attr("dy", ".35em")
+        .attr("transform", "rotate(90)")
+        .style("text-anchor", "start");
+
+    // add the y Axis
+    svg.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(10, "r"))
 }
