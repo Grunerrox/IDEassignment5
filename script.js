@@ -8,7 +8,7 @@ var projection = d3.geoMercator()
     .scale(280000)
     .translate([width / 2, height / 2]);
 
-
+// Set scaling
 var scale = d3.scaleLinear()
     .range([0, width])
     .domain([0, 1000]);
@@ -22,18 +22,8 @@ var svg = d3.select("div.map")
     .attr("width", 1000)
     .attr("height", height);
 
-var select = d3.select("div.select")
-    .append("select")
-    .attr("class", "form-control crime")
-    .on('change', () => onchange('select.crime'));
-
-var selectYear = d3.select("div.selectYear")
-    .append("select")
-    .attr("class", "form-control year")
-    .on('change', () => onchange('select.year'));
-
-//Load in GeoJSON dataj
-d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sfpd_districts.geojson", function (data) {
+//Load in GeoJSON data
+d3.json("../district.geojson", function (data) {
     loadMap(data, "#fff");
 });
 
@@ -48,14 +38,15 @@ function getCategory(crime) {
 //add selection option show all
 var years = [];
 
-function getYears(date) {
+function getYears(element) {
     //console.log(date);
-    var year = convertDate(date.properties.Dates);
-    console.log(year);
+    var year = convertDateToYear(element.properties.Dates);
     years.push(year);
+    element.properties['Year'] = year.toString();
+    return element;
 }
 
-d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crime.geojson", function (data) {
+d3.json("../geo.geojson", function (data) {
     // get all categories of crimes, and remove duplicates
     data.features.forEach(getCategory);
     crimes = crimes.filter(function (item, index, inputArray) {
@@ -63,15 +54,79 @@ d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crim
     });
 
     data.features.forEach(getYears);
+    console.log(data);
     years = years.filter(function (item, index, inputArray) {
         return inputArray.indexOf(item) == index;
     }).sort();
     years = ["All years"].concat(years);
 
-    loadSelection(crimes, select);
-    loadSelection(years, selectYear);
-    loadCrime(data, "#fff");
+
+
+    // Create selection filters
+    selections(data);
+
+    // plot the data
+    plot(data);
 });
+
+// Plot crimes
+function plot(data) {
+    loadCrime(data, "#fff");
+}
+
+// Update changes in data in the plot
+function updatePlot(data) {
+    d3.selectAll("path.crime").remove();
+    plot(data);
+}
+
+function selections(data) {
+    var filters = { years: { name: 'Year', selected: 'All years' }, crimes: { name: 'Category', selected: 'All crimes' } };
+
+    var selectCrime = d3.select("div.select")
+        .append("select")
+        .attr("class", "form-control crime")
+        .on('change', function () { filters.crimes.selected = getSelectedValue(this); onchange(); });
+
+    var selectYear = d3.select("div.selectYear")
+        .append("select")
+        .attr("class", "form-control year")
+        .on('change', function () { filters.years.selected = getSelectedValue(this); onchange(); });
+
+
+    // Selections
+    loadSelection(crimes, selectCrime);
+    loadSelection(years, selectYear);
+
+    // On seletion change
+    function onchange() {
+        // Cheating way of copying an object
+        var newData = JSON.parse(JSON.stringify(data));
+
+        // Get the filters and ... filter
+        Object.keys(filters).forEach(filterKey => {
+            newData.features = filterData(newData.features, filters[filterKey].selected, filters[filterKey].name);
+            console.log(newData);
+        });
+        updatePlot(newData);
+    }
+}
+
+// Filter the data
+function filterData(array, filterId, filterType) {
+    if (filterId == 'All years' || filterId == 'All crimes')
+        return array;
+    console.log(filterId, filterType);
+    array = array.filter(function (elem, i, array) {
+        return array[i].properties[filterType] === filterId
+    }
+    );
+    return array;
+}
+
+function getSelectedValue(selector) {
+    return d3.select(selector).property('value')
+}
 
 //Add selection options given array of crimes
 function loadSelection(data, option) {
@@ -85,48 +140,10 @@ function loadSelection(data, option) {
         .html(function (d) { return d });
 }
 
-// Selection onchange filter
-function onchange(divClass) {
-    console.log(divClass);
-    selectValue = d3.select(divClass).property('value');
-
-    if (divClass == 'select.year') {
-        list = years
-        if (selectValue == list[0]) {
-            d3.selectAll("path.crime").attr("hidden", null);
-        } else {
-            filterYear(selectValue)
-        }
-    } else {
-        list = crimes;
-        if (selectValue == list[0]) {
-            d3.selectAll("path.crime").attr("hidden", null);
-        } else {
-            filterCrime(selectValue)
-        }
-    }
-
-
-};
-
-function filterCrime(crime) {
-    d3.selectAll("path.crime").attr("hidden", true);
-    d3.selectAll("path.crime").each(function (d) {
-        category = d3.select(this).attr("category");
-        if (category == crime) {
-            d3.select(this).attr("hidden", null);
-        }
-    });
-}
-
-function filterYear(selectedYear) {
-    d3.selectAll("path.crime").attr("hidden", true);
-    d3.selectAll("path.crime").each(function (d) {
-        year = d3.select(this).attr("year");
-        if (year == selectedYear) {
-            d3.select(this).attr("hidden", null);
-        }
-    });
+// convert a date to year
+function convertDateToYear(date) {
+    var d = new Date(date);
+    return d.getFullYear();
 }
 
 function loadCrime(data) {
@@ -149,7 +166,7 @@ function loadCrime(data) {
             return d.properties.Category;
         })
         .attr("year", function (d) {
-            return convertDate(d.properties.Dates);
+            return convertDateToYear(d.properties.Dates);
         })
         .style("opacity", 0.5)
         .on("mouseover", function (d) {
@@ -186,14 +203,9 @@ function loadCrime(data) {
                 "Week day: <b>" + d.properties.DayOfWeek + "</b><br/>" +
                 "Resolution: <b>" + d.properties.Resolution + "</b><br/>" +
                 "District: <b>" + d.properties.PdDistrict + "</b><br/>" +
-                "Year: <b>" + convertDate(d.properties.Dates))
+                "Year: <b>" + convertDateToYear(d.properties.Dates))
                 .style("opacity", 1);
         });
-}
-
-function convertDate(date) {
-    var d = new Date(date);
-    return d.getFullYear();
 }
 
 function loadMap(data, color) {
