@@ -108,3 +108,7 @@ path.crime.selected {
     animation: dash 2s ease alternate infinite;
     cursor: pointer;
 }
+
+.bar {
+    fill: steelblue;
+}
