@@ -113,3 +113,23 @@ path.crime.selected {
 .bar {
     fill: steelblue;
 }
+
+.barplot {
+    display: block;
+    margin: auto;
+    right:0px;
+}
+
+div.tooltipBar {
+    position: absolute;
+    text-align: center;
+    width: 100px;
+    height: 22px;
+    padding: 2px;
+    font: 12px sans-serif;
+    border: 2px solid;
+    border-color: lightsteelblue;
+    background: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    pointer-events: none;
+}

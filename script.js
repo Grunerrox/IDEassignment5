@@ -22,6 +22,19 @@ var svg = d3.select("div.map")
     .attr("width", 1000)
     .attr("height", height);
 
+var margin = {top: 20, right: 20, bottom: 200, left: 40},
+    width = 950 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svgBar = d3.select(".barplot").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g");
+
+var tooltipBar = d3.select("body").append("div")
+    .attr("class", "tooltipBar")
+    .style("opacity", 0);
+
 //Load in GeoJSON data
 d3.json("../district.geojson", function (data) {
     loadMap(data, "#fff");
@@ -54,7 +67,7 @@ d3.json("../geo.geojson", function (data) {
     });
 
     data.features.forEach(getYears);
-    console.log(data);
+    //console.log(data);
     years = years.filter(function (item, index, inputArray) {
         return inputArray.indexOf(item) == index;
     }).sort();
@@ -68,6 +81,14 @@ d3.json("../geo.geojson", function (data) {
     barChart(data);
 });
 
+
+function updateBarplot(data){
+    d3.selectAll("rect.bar").remove();
+    d3.selectAll(".barchart.axis--x").remove();
+    d3.selectAll(".barchart.axis--y").remove();
+    barChart(data);
+}
+
 // Plot crimes
 function plot(data) {
     loadCrime(data, "#fff");
@@ -77,7 +98,6 @@ function plot(data) {
 function updatePlot(data) {
     d3.selectAll("path.crime").remove();
     plot(data);
-    barChart(data);
 }
 
 function selections(data) {
@@ -106,9 +126,10 @@ function selections(data) {
         // Get the filters and ... filter
         Object.keys(filters).forEach(filterKey => {
             newData.features = filterData(newData.features, filters[filterKey].selected, filters[filterKey].name);
-            console.log(newData);
+            //console.log(newData);
         });
         updatePlot(newData);
+        updateBarplot(newData);
     }
 }
 
@@ -116,7 +137,7 @@ function selections(data) {
 function filterData(array, filterId, filterType) {
     if (filterId == 'All years' || filterId == 'All crimes')
         return array;
-    console.log(filterId, filterType);
+    //console.log(filterId, filterType);
     array = array.filter(function (elem, i, array) {
         return array[i].properties[filterType] === filterId
     }
@@ -250,7 +271,7 @@ function filterJSON(json, key, value) {
 }
 
 function barChart(data) {
-    console.log(data)
+    //console.log(data)
     // set the dimensions and margins of the graph
     var margin = {top: 20, right: 20, bottom: 200, left: 40},
         width = 960 - margin.left - margin.right,
@@ -266,31 +287,61 @@ function barChart(data) {
     // append the svg object to the body of the page
     // append a 'group' element to 'svg'
     // moves the 'group' element to the top left margin
-    var svg = d3.select("body").append("svg")
+    svgBar
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
-    data = data.features;
 
-    // Scale the range of the data in the domains
-    x.domain(data.map(function(d) { return d.properties.Category; }));
-    //y.domain([0, d3.max(data, function(d) { return d.???; })]);
+    // Creating object with category and number of frequency
+    data = data.features;
+    var obj = [{}]
+    var dict = {}
+    data.forEach((d) => {
+        key = d.properties.Category;
+        if (key in dict){
+            dict[key] = dict[key]+1;
+        } else {
+            dict[key] = 1;
+        }
+    });
+
+    var i = 0;
+    for (var category in dict) {
+        obj[i] = {x : category, y: dict[category]};
+        i++;
+    }
+
+    x.domain(obj.map(function(d) { return d.x; }));
+    y.domain([0, d3.max(obj, function(d) { return d.y; })]);
 
     // append the rectangles for the bar chart
-    svg.selectAll(".bar")
-        .data(data)
+    svgBar.selectAll(".bar")
+        .data(obj)
         .enter().append("rect")
         .attr("class", "bar")
-        .attr("x", function(d) { return x(d.properties.Category);})
+        .attr("x", function(d) { return x(d.x);})
         .attr("width", x.bandwidth())
-        .attr("y", function(d) { return 10; }) // CHANGE THIS
-        .attr("height", function(d) { return height - 10; }); // CHANGE THIS
+        .attr("y", function(d) { return y(d.y); })
+        .attr("height", function(d) { return height - y(d.y); })
+        .on("mouseover", function (d) {
+            tooltipBar.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltipBar.html("Number: <b>" +d.y + "</b>")
+                .style("left", (d3.event.pageX - 28) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function (d) {
+            tooltipBar.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
 
     // add the x Axis
-    svg.append("g")
-        .attr("class", "axis axis--x")
+    svgBar.append("g")
+        .attr("class", "barchart axis--x")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x))
         .selectAll("text")
@@ -301,7 +352,7 @@ function barChart(data) {
         .style("text-anchor", "start");
 
     // add the y Axis
-    svg.append("g")
-        .attr("class", "axis axis--y")
+    svgBar.append("g")
+        .attr("class", "barchart axis--y")
         .call(d3.axisLeft(y).ticks(10, "r"))
 }
