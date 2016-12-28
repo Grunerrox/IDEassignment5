@@ -36,7 +36,7 @@ var tooltipBar = d3.select("body").append("div")
     .style("opacity", 0);
 
 //Load in GeoJSON data
-d3.json("district.geojson", function (data) {
+d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sfpd_districts.geojson", function (data) {
     loadMap(data, "#fff");
 });
 
@@ -59,7 +59,7 @@ function getYears(element) {
     return element;
 }
 
-d3.json("geo.geojson", function (data) {
+d3.json("https://wouterboomsma.github.io/ide2016/assignments/assignment5/sf_crime.geojson", function (data) {
     // get all categories of crimes, and remove duplicates
     data.features.forEach(getCategory);
     crimes = crimes.filter(function (item, index, inputArray) {
