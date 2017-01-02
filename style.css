@@ -10,7 +10,7 @@ text {
 
 path {
     stroke-width: 1px;
-    fill: rgba(255,255,255,0.22);
+    fill: #f6f0f4;
     stroke: #C0C0C0;
 }
 
@@ -53,41 +53,30 @@ div.tooltipMap {
     pointer-events: none;
 }
 
-div.tooltipCrime {
+
+
+div.tooltipCrimeSelected, div.tooltipCrime {
     position: absolute;
     text-align: left;
-    width: 200px;
+    width: 240px;
     height: 100px;
     padding: 2px;
+    left: 40px;
+    top: 200px;
     font: 12px sans-serif;
-    border: 2px solid;
-    border-color: lightsteelblue;
-    background: rgba(255,255,255,1);
     border-radius: 5px;
     pointer-events: none;
 }
 
-div.tooltipCrimeSelected {
-    position: absolute;
-    text-align: left;
-    width: 200px;
-    height: 100px;
-    padding: 2px;
-    left: 10px;
-    top: 10px;
-    font: 12px sans-serif;
-    border: 2px solid;
-    border-color: lightsteelblue;
-    background: rgba(255,255,255,1);
-    border-radius: 5px;
-    pointer-events: none;
-}
 div.map {
-    background-color: #f2f6f9;
+    /*//background-color: #f2f6f9;*/
     position: relative;
+    padding: 60px 60px 0 40px;
+    background: #a2cbff;
+    margin-bottom: -40px;
 }
 
-div.select {
+/*div.select {
     position: absolute;
     top: 40px;
     right: 10px;
@@ -96,15 +85,23 @@ div.selectYear {
     position: absolute;
     top: 0px;
     right: 10px;
+}*/
+div.filters {
+    position: absolute;
+    top: 40px;
+    right: 10px;
 }
-
+.crimeNumber {
+    font-weight: 800;
+}
 path.crime {
-    stroke: #cf9950
+    fill: white;
+  /*  stroke: #cf9950*/
+  stroke: grey;
 }
 
 path.crime.selected {
-    fill: #cf9950;
-    stroke: #009688;
+    stroke: #3e598b;
     stroke-width: 20px;
     animation: dash 2s ease alternate infinite;
     cursor: pointer;
@@ -118,6 +115,8 @@ path.crime.selected {
     display: block;
     margin: auto;
     right:0px;
+/*    background: #f2f6f9;*/
+    padding: 0 60px 0 40px;
 }
 
 div.tooltipBar {
@@ -132,4 +131,15 @@ div.tooltipBar {
     background: rgba(255,255,255,0.8);
     border-radius: 5px;
     pointer-events: none;
+}
+
+
+select {
+    border: none !important;
+    background: none !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    -webkit-appearance: none;
+    border-bottom: 2px solid rgba(0,0,0,0.77) !important;
 }
