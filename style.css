@@ -10,7 +10,7 @@ text {
 
 path {
     stroke-width: 1px;
-    fill: #f6f0f4;
+    fill: #f5f5f3;
     stroke: #C0C0C0;
 }
 
@@ -72,8 +72,7 @@ div.map {
     /*//background-color: #f2f6f9;*/
     position: relative;
     padding: 60px 60px 0 40px;
-    background: #a2cbff;
-    margin-bottom: -40px;
+    background: #cdd2d4;
 }
 
 /*div.select {
